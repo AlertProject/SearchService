@@ -1,0 +1,78 @@
+<!--
+
+Hound: Search service
+Copyright (C) 2012  GSyC/LibreSoft
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Authors: Felipe Ortega <jfelipe@libresoft.es>    -->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" id="html">
+    <head>
+      <title>ALERT - Hound Search Service</title>
+      <meta name="author" content="Jos&eacute; Felipe Ortega Soto <jfelipe __at__ libresoft.es>">
+      <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+      <!-- <link rel="stylesheet" type="text/css" href="/gymkhana/templates/style.css" media="screen"/> -->
+      <!-- {% block java_script %} -->
+      <!-- {% endblock %} -->
+    </head>
+    <body onload="configurate()"> <!-- For AJAX, if needed -->
+      <h1> Welcome to the Hound Search Service </h1> </br>
+      You can create your search query using the REST API, according to the 
+      following template: </br>
+      <ul>
+        <li> issue_id = Numerical id of the issue to be retrieved</li>
+        <li> commit_uri = URI of the commit to be retrieved</li>
+        <li> commit_option = type of query related to commits [info|prod] </li>
+        <ul>
+        <li> info = get information about a commit </li>
+        <li> prod = get all commits related to a product </li>
+        </ul>
+        <li> issue_option = type of query related to issues [ext|sim|sug]</li>
+        <ul>
+        <li> ext = get extended information about an issue </li>
+        <li> sim = get other issues related to this one </li>
+        <li> sug = suggest developers that could work on this issue </li>
+        </ul>
+        <li> keywords = List of related keywords, liked with '+'</li>
+        <li> method_uri = URI of the method</li>
+        <li> product = name of the product</li>
+        <li> developer = UUID of the developer</li>
+        <li> from_date = filter search results from this starting date</li>
+        <li> to_date = filter search results up to this end date (still not in use)</li>
+      </ul>
+      </br>
+      <h2>Example queries (testing)</h2>
+      <p>
+      Some example queries for testing purposes:
+          <ul>
+           <li><a href="/hound/search/test/query/?commit_option=info&commit_uri=http://www.alert-project.eu/ontologies/alert_scm.owl#Commit1">Commit info</a></li>
+           <li><a href="/hound/search/test/query/?commit_option=prod&product=solid">All commits for a product</a></li>
+           <li><a href="/hound/search/test/query/?issue_option=ext&issue_id=55">Extended information for an issue</a></li>
+           <li><a href="/hound/search/test/query/?product=solid">All issues for a product</a></li>
+           <li><a href="/hound/search/test/query/?method_uri=http://www.alert-project.eu/ontologies/alert.owl#Method1">All issues for a method</a></li>
+           <li><a href="/hound/search/test/query/?issue_option=sug&issue_id=55">Suggest developers for issues</a></li>
+           <li><a href="/hound/search/test/query/?developer=ff9dc34d-774e-47ad-9eab-07c46ab3e765ff0df1c4-4c8d-4703-97ea-267d83b4ac08">Suggest issues for a developer</a></li>
+           <li><a href="/hound/search/test/query/?issue_option=sim&issue_id=55">Retrieve all issues related to this one</a></li>
+           <li><a href="/hound/search/test/query/?keywords=sound">Retrieve all issues related to these keywords</a></li>
+          </ul>
+      </p>
+      <h2>Example queries (production)</h2>
+      <p>
+      Some example queries using production services:
+      </p>
+  </body>
+</html>

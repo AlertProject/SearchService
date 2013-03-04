@@ -1,0 +1,5 @@
+# Ignore compiled and object files
+*.py[co]
+
+# Ignore temporary chache files
+*~

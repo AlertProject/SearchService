@@ -1,0 +1,67 @@
+<soap:Envelope xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  <soap:Header></soap:Header>
+  <soap:Body>
+    <wsnt:Notify>
+      <wsnt:NotificationMessage>
+        <wsnt:Topic></wsnt:Topic>
+        <wsnt:ProducerReference>
+          <wsa:Address>http://www.alert-project.eu/search</wsa:Address>
+        </wsnt:ProducerReference>
+        <wsnt:Message>
+          <ns1:event xmlns:ns1="http://www.alert-project.eu/" xmlns:r1="http://www.alert-project.eu/rawevents-mailinglist" xmlns:r2="http://www.alert-project.eu/rawevents-wiki" xmlns:s3="http://www.alert-project.eu/APIcall-response" xmlns:s2="http://www.alert-project.eu/APIcall-request" xmlns:s1="http://www.alert-project.eu/strevents-keui" xmlns:o="http://www.alert-project.eu/ontoevents-mdservice" xmlns:s="http://www.alert-project.eu/strevents-kesi" xmlns:r="http://www.alert-project.eu/rawevents-forum" xmlns:sm="http://www.alert-project.eu/stardom" xmlns:sc="http://www.alert-project.eu/socrates" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:se="http://www.alert-project.eu/search" xsi:schemaLocation="http://www.alert-project.eu/alert-root.xsd">
+            <ns1:head>
+              <ns1:sender>Search</ns1:sender>
+              <ns1:timestamp>10000</ns1:timestamp>
+              <ns1:sequencenumber>1</ns1:sequencenumber>
+            </ns1:head>
+            <ns1:payload>
+              <ns1:meta>
+                <ns1:startTime>10010</ns1:startTime>
+                <ns1:endTime>10010</ns1:endTime>
+                <ns1:eventName>ALERT.KEUI.Response</ns1:eventName>
+                <ns1:eventId>5478</ns1:eventId>
+                <ns1:eventType>request</ns1:eventType>
+              </ns1:meta>
+              <ns1:eventData>
+                <s1:keuiRequest>
+                  <s1:requestType>GeneralQuery</s1:requestType>
+                  <s1:requestData>
+                    <query>
+                      <queryArgs>
+                        <conditions>
+                          <keywords>
+                            <kw>solid</kw>
+                          </keywords>
+                        </conditions>
+                      </queryArgs>
+                      <params includeAttachments="1" keywordMatchOffset="25" includePeopleData="0" sortBy="dateDesc" snipMatchKeywords="1" offset="0" resultData="itemData" maxCount="100" itemDataSnipLen="200"></params>
+                    </query>
+                  </s1:requestData>
+                </s1:keuiRequest>
+              
+              <s1:keuiResponse>
+                <results type="itemData">
+                  <info totalCount="3" offset="0" maxCount="100"></info>
+                  <items>
+                    <item id="11139" itemType="11" time="12788620374000" tags="35,5449" entryId="116-100956" threadId="2946" count="4" from="146">
+                        <metaData></metaData>
+                        <shortContent> wait until projects like Solid rise up, so we can easily use online/offline policies. Stuff for amarok v2.0, I guess. Anyway, in the meantime, a dcop call (something like toggleLastfmSubmit()) could </shortContent></item>
+                    <item id="9937" itemType="11" time="12776418996000" tags="35,5449" entryId="116-98505" threadId="2334" count="1" from="1">
+                        <metaData></metaData>
+                        <shortContent> intention is to build a solid audio player, however i wonder if anyone (besides me) would also want to see a unified \&quot;media\&quot; player, that merges amarok with (say) xine ? 
+                        anyway, i love amarok, ju</shortContent></item>
+                    <item id="7772" itemType="11" time="12757248912000" tags="35,5449" entryId="115-94137" threadId="1184" count="25" from="1">
+                        <metaData></metaData>
+                    <shortContent> including new installs on solid hardware and it still goes boom. I\&apos;ve used it on multiple distros on multiple machines and still it goes boom everywhere. 
+                    Goodness, not everyone can contribute an</shortContent></item>
+                  </items>
+                </results>
+               </s1:keuiResponse>
+              </ns1:eventData>
+            </ns1:payload>
+          </ns1:event>
+        </wsnt:Message>
+      </wsnt:NotificationMessage>
+    </wsnt:Notify>
+  </soap:Body>
+</soap:Envelope>

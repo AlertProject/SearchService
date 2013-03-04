@@ -1,0 +1,200 @@
+<!--
+
+Hound: Search service
+Copyright (C) 2012  GSyC/LibreSoft
+
+This program is free software: you can redistribute it
+it under the terms of the GNU Affero General Public Li
+published by the Free Software Foundation, either vers
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will b
+but WITHOUT ANY WARRANTY; without even the implied war
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero Gene
+along with this program.  If not, see <http://www.gnu.
+
+Authors: Felipe Ortega <jfelipe@libresoft.es>    -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+
+<head>
+    <style type="text/css" media="all">
+        body{
+        font-family:"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+        font-size:12px;
+        }
+        p, h1, form, button{border:0; margin:0; padding:0;}
+        .spacer{clear:both; height:1px;}
+        /* ----------- My Form ----------- */
+        .myform{
+        margin:0 auto;
+        width:400px;
+        padding:14px;
+        }
+
+        /* ----------- stylized ----------- */
+        #stylized{
+        border:solid 2px #b7ddf2;
+        background:#ebf4fb;
+        }
+        #stylized h1 {
+        font-size:14px;
+        font-weight:bold;
+        margin-bottom:8px;
+        }
+        #stylized h3 { 
+        font: italic normal 1.4em georgia, sans-serif;
+        letter-spacing: 1px; 
+        margin-bottom: 0; 
+        color: #7D775C;
+        }
+        #stylized p{
+        font-size:11px;
+        color:#666666;
+        margin-bottom:20px;
+        border-bottom:solid 1px #b7ddf2;
+        padding-bottom:10px;
+        }
+        #stylized label{
+        display:block;
+        font-weight:bold;
+        text-align:right;
+        width:140px;
+        float:left;
+        }
+        #stylized .small{
+        color:#666666;
+        display:block;
+        font-size:11px;
+        font-weight:normal;
+        text-align:right;
+        width:140px;
+        }
+        #stylized input{
+        float:left;
+        font-size:12px;
+        padding:4px 2px;
+        border:solid 1px #aacfe4;
+        width:200px;
+        margin:2px 0 20px 10px;
+        }
+        #stylized select {
+        border: 1px solid #AACFE4;
+        font-size: 12px;
+        margin: 2px 0 20px 10px;
+        padding: 4px 2px;
+        width: 200px;
+        }
+        #stylized button{
+        clear:both;
+        margin-left:150px;
+        width:125px;
+        height:31px;
+        background: #666666 no-repeat;
+        text-align:center;
+        line-height:31px;
+        color:#FFFFFF;
+        font-size:11px;
+        font-weight:bold;
+        }
+        #stylized li{
+        display: inline;
+        list-style-type: none;
+        padding-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="stylized" class="myform">
+    <form action="/hound/search/query/" method="get">{% csrf_token %}
+        <h3>Search API Form</h3>
+        <p> </p>
+        
+        <table border="0">
+        <tr><td>
+            {{form.issue_id.errors}}
+            <label>{{form.issue_id.label_tag}}
+            <span class="small">Search for issue ID</span>
+            </label>
+            {{form.issue_id}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.issue_option.errors}}
+            <!--<label>{{form.issue_option.label_tag}}</label>-->
+            {{form.issue_option}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.commit_uri.errors}}
+            <label>{{form.commit_uri.label_tag}}
+            <span class="small">Search for commit URI</span>
+            </label>
+            {{form.commit_uri}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.commit_option.errors}}
+            <!--<label>{{form.commit_option.label_tag}}</label>-->
+            {{form.commit_option}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.product.errors}}
+            <label>{{form.product.label_tag}}
+            <span class="small">Enter product name</span>
+            </label>
+            {{form.product}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.method_uri.errors}}
+            <label>{{form.method_uri.label_tag}}
+            <span class="small">Enter method URI</span>
+            </label>
+            {{form.method_uri}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.from_date.errors}}
+            <label>{{form.from_date.label_tag}}
+            <span class="small">From date</span>
+            </label>
+            {{form.from_date}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.to_date.errors}}
+            <label>{{form.to_date.label_tag}}
+            <span class="small">To date</span>
+            </label>
+            {{form.to_date}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.keywords.errors}}
+            <label>{{form.keywords.label_tag}}
+            <span class="small">Issues related to keywords</span>
+            </label>
+            {{form.keywords}}
+        </td></tr>
+        
+        <tr><td>
+            {{form.developer.errors}}
+            <label>{{form.developer.label_tag}}
+            <span class="small">Enter developer UUID</span>
+            </label>
+            {{form.developer}}
+        </td></tr>
+        </table>
+        
+        <button type="submit">Search</button>
+    </form>
+<div>
+</body>

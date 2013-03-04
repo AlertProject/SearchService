@@ -1,0 +1,52 @@
+=============================================================================
+               ALERT's Hound: A general purpose search service
+=============================================================================
+
+Hound is a general purpose search service that is included in the suite of
+services offered by the ALERT platform [1]. Hound provides a generic search
+interface to retrieve information and relationships retrieved from data about
+software development processes, in particular for Free, Libre and Open Source
+Software (FLOSS) projects.
+
+The service provides a REST interface and a simple search form for users to
+enter their queries. Information is then retrieved from the rest of the ALERT
+services and components (metadata service, KEUI, recommendation service, etc.).
+
+This is a basic service to demonstrate the capability of ALERT to improve the
+software development experience, saving time and effort of project members in
+repetitive and error-prone tasks, such as detection of duplicate bugs and other
+types of relationships between different information sources (e.g. Version
+Control System and Issue Tracking System).
+
+== Features ==
+
+Hound currently supports only simple search operations:
+    - Search for extended information about an issue.
+    - Find possible duplicate issues for a given issue.
+    - Find commits related to a given issue.
+    - Include time restrictions when performing queries (temporal window)
+    
+== Future work ==
+
+- Incorporate related information from other different data sources (forum
+posts, wikis, messages in mailing lists, etc.).
+- Live update of search results as more information becomes available for the
+ALERT system.
+- Improve perfomance by chaching frequent types of queries and results.
+- Better user interface.
+
+== Requirements ==
+
+- Python (>= 2.6)
+- Django (>= 1.3)
+- Tastypie (>= 0.9.1.) for REST interface
+- ActiveMQ (= 5.5.1)
+- ActiveMQ-cpp ( = 3.0.1)
+- pyActiveMQ ( = r203)
+- MySQL (>= 5.0)
+- Additional ALERT services must also be available for Hound to work correctly
+(metadata, recommendation, KEUI, etc.).
+
+== Links ==
+
+[1] http://www.alert-project.eu/

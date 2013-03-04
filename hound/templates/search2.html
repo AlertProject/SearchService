@@ -1,0 +1,420 @@
+<!--
+
+Hound: Search service
+Copyright (C) 2012  GSyC/LibreSoft
+
+This program is free software: you can redistribute it
+it under the terms of the GNU Affero General Public Li
+published by the Free Software Foundation, either vers
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will b
+but WITHOUT ANY WARRANTY; without even the implied war
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero Gene
+along with this program.  If not, see <http://www.gnu.
+
+Authors: Felipe Ortega <jfelipe@libresoft.es>    -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+
+<head>
+<style type="text/css" media="all">
+
+legend{
+padding: 2px 5px;
+font-family: Verdana,Arial,Helvetica,sans-serif;
+font-size: 12px;
+}
+
+body{
+font-family:"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+font-size:12px;
+}
+p, h1, form, button{border:0; margin:0; padding:0;}
+.spacer{clear:both; height:1px;}
+/* ----------- My Form ----------- */
+.myform{
+width:350px;
+padding:14px;
+margin-left: 20px;
+margin-top: 10px;
+}
+
+/* ----------- stylized ----------- */
+#stylized{
+border:solid 1px #b7ddf2;
+}
+#stylized h1 {
+font-size:14px;
+font-weight:bold;
+margin-bottom:8px;
+}
+#stylized h3 { 
+font: italic normal 1.4em georgia, sans-serif;
+letter-spacing: 1px; 
+margin-bottom: 0; 
+color: #7D775C;
+margin-bottom: 10px;
+}
+#stylized p{
+font-size:11px;
+color:#666666;
+margin-bottom:20px;
+border-bottom:solid 1px #b7ddf2;
+padding-bottom:10px;
+}
+#stylized label{
+display:block;
+font-weight:bold;
+text-align:right;
+width:160px;
+float:left;
+}
+#stylized label .grey{
+display:block;
+font-weight:bold;
+text-align:right;
+width:160px;
+float:left;
+color: darkgrey;
+}
+#stylized .small{
+color:#666666;
+display:block;
+font-size:11px;
+font-weight:normal;
+text-align:right;
+width:160px;
+}
+#stylized input{
+float:left;
+font-size:12px;
+padding:4px 2px;
+border:solid 1px #aacfe4;
+width:150px;
+margin:2px 0 20px 10px;
+}
+#stylized select {
+border: 1px solid #AACFE4;
+font-size: 12px;
+margin: 2px 0 20px 10px;
+padding: 4px 2px;
+width: 160px;
+}
+#stylized button{
+clear:both;
+margin-left:190px;
+width:125px;
+height:31px;
+background: #666666 no-repeat;
+text-align:center;
+line-height:31px;
+color:#FFFFFF;
+font-size:11px;
+font-weight:bold;
+}
+#results{
+position: absolute;
+top: 10px;
+left: 425px;
+width: 600px;	
+}
+
+#box_status{
+background-color: lightgrey;
+padding-top: 5px;
+padding-bottom: 5px;
+padding-left: 1px;
+padding-right: 1px;
+margin-top: 5px;
+}
+
+#box_status p{
+padding: 10px;
+}
+ul {
+list-style-type: none;
+}
+
+td {
+vertical-align:top;
+}
+
+cite{
+color: #009933;
+}
+
+h3.r{
+white-space: nowrap;
+font-size: medium;
+margin-bottom: 0px;
+}
+
+.autocomplete-w1 .autocomplete{ 
+background-color: #b7ddf2;
+display: block; 
+width: 150px; 
+max-height: 600px;
+}
+
+#related_title{
+font: italic normal 1.1em georgia, sans-serif;
+letter-spacing: 1px; 
+font-weight:bold;
+}
+
+#related_sources{
+margin-top: 15px;
+margin-bottom: 5px;
+background-color: lightblue;
+}
+
+#related_sources p{
+padding: 5px;
+}
+
+#recommended_devs{
+margin-top: 15px;
+margin-bottom: 5px;
+background-color: lightblue;
+}
+
+#recommended_devs p{
+padding: 5px;
+}
+
+p.author{
+padding: 3px;
+}
+
+p.comment{
+padding: 3px;
+background-color: lightyellow;
+}
+
+</style>
+
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
+<script type="text/javascript">
+
+// Firefox, Google Chrome, Opera, Safari, Internet Explorer from version 9
+
+// Internet Explorer
+//function OnPropChanged (event) {
+//    toggle_left(false);
+//}
+
+function disable_from_suggest (event){
+		document.getElementById("id_issue_id").value = '';
+}	
+
+function disable_from_issue_id(){
+document.getElementById("id_suggested").checked = false;
+}
+
+function GetRadioButtonValue(id)
+{
+		var radio = document.getElementsByName(id);
+		for (var j = 0; j < radio.length; j++)
+		{
+			if (radio[j].checked)
+				return radio[j].value;
+		}
+}
+
+$(document).ready(function(){
+//var url="http://localhost/alert/reply.php";
+var url="http://127.0.0.1:8000/hound/search/query";
+//http://localhost:8080/hound/search/query/?project=pepe&issue_id=3&issue_option=rel&keywords=
+var query;
+var responsediv='results';
+$('button').click(function(){
+			project=$("#id_project").val();
+			issue_id=$("#id_issue_id").val();
+			suggested=GetRadioButtonValue("suggested");
+			document.getElementById(responsediv).innerHTML = "";
+$.getJSON(url+"/?project="+project+"&issue_id="+issue_id+"&suggested="+suggested+"&jsoncall=?",function(json){
+						//$("#results").append('<div id="res"> Type: '+json['event']+'</div>');                     
+						
+						if (json['event'] == "ALERT.Recommender.IdentityRecommendation"){
+							$("#results").append('<div id="res">Recommended developers for the issues for the project Solid (KDE)</div>');
+							//$("#results").append('<table><tr><th>Project</th><th>Issue</th><th>Recommended Assignee</th></tr>');
+							for (var key in json['devs']) {
+								if (json['devs'].hasOwnProperty(key)) {
+									//alert(key + " -> " + json[1][key]);
+									//$("#results").append('<tr><td>Solid (KDE)</td><td><a href="' + json['issue']['url'] + '">' + json['issue']['id']+'</a></td><td>' + json['devs'][key] + '</td></tr>');
+									$("#results").append('<h3 class="r">Solid (KDE) <a href="'+ json['devs'][key][3] +'">#' + key + '</a> '+json['devs'][key][2]+'</h3>');
+									$("#results").append('<cite>' + json['devs'][key][3] + '</cite>');
+									$("#results").append('<br/>');
+									//$("#results").append('<ul>');
+									for each (var d in json['devs'][key][1]){
+										$("#results").append('<p>'+ d['name'] + ' - ' + d['uuid'] + '</p>');
+									}
+									//$("#results").append('</ul>');
+								}
+							}
+							$("#results").append('</table>');
+						} else if (json['event'] == "issue.getInfo"){
+							$("#results").append('<div id="res">Extended view for the issue <a href="' +json['issues']['issue_url'] + '">#'+json['issues']['issue_id']+'</a> of the project Solid (KDE)</div>');
+							$("#results").append('<h3 class="r">Solid (KDE) <a href="' +json['issues']['issue_url'] + '">#'+json['issues']['issue_id']+'</a> '+json['issues']['issue_description']+'</h3>');
+							$("#results").append('<cite>'+ json['issues']['issue_url']+'</cite>');
+							//$("#results").append('<p></p><p>Status: '+json['issues']['issue_status'] +' - Severity: ' + json['issues']['issue_severity'] + ' - Resolution: ' +json['issues']['issue_resolution'] + '</p>');
+							//$("#results").append('<p>Operating System: ' + json['issues']['issue_computer_system']['os']+' - Platform: ' + json['issues']['issue_computer_system']['platform'] + ' </p>');
+							//$("#results").append('<p>Created on '+ json['issues']['issue_date_opened'] +' by '+ json['issues']['issue_author']['author_id']+'</p>');
+							$("#results").append('<div id="box_status"><p>Status: <b>'+json['issues']['issue_status'] +'</b>  -  Severity: ' + json['issues']['issue_severity'] + '  -  Resolution: ' +json['issues']['issue_resolution'] + '</p><p>Operating System: ' + json['issues']['issue_computer_system']['os']+'  -  Platform: ' + json['issues']['issue_computer_system']['platform'] + ' </p><p>Created on '+ json['issues']['issue_date_opened'] +' by '+ json['issues']['issue_author']['author_id']+'</p></div>');
+							/*$("#results").append('<p>Watchers:</p>');							
+							for each (var w in json['issues']['issue_cc_people']){
+								$("#results").append(w['name']);
+							}*/
+							var html_related = '';
+							if (json['issues']['references']){
+								//$("#results").append('<div id="related_title">Related sources of information</div>');
+								html_related += '<div id="related_sources"><div id="related_title">Related sources of information</div>';
+								if (json['issues']['references']['issues']){
+									for each (var i in json['issues']['references']['issues']){
+										//$("#results").append('<p>Issue: <a href="'+ i[0] +'">' + i[1] + '</a></p>');
+										html_related += '<p>Issue: <a href="'+ i[0] +'">' + i[1] + '</a></p>';
+									}
+								}
+								if (json['issues']['references']['commits']){
+									for each (var i in json['issues']['references']['commits']){
+										//$("#results").append('<p>Commit: <a href="'+ i[0] +'">' + i[1] + '</a></p>');
+										html_related += '<p>Commit: <a href="'+ i[0] +'">' + i[1] + '</a></p>';
+									}
+								}
+								if (json['issues']['references']['emails']){
+									for each (var i in json['issues']['references']['emails']){
+										//$("#results").append('<p>Mail message: <a href="'+ i[0] +'">' + i[1] + '</a></p>');
+										html_related += '<p>Mail message: <a href="'+ i[0] +'">' + i[1] + '</a></p>';
+									}
+								}
+								if (json['issues']['references']['posts']){
+									for each (var i in json['issues']['references']['posts']){
+										//$("#results").append('<p>Mail message: <a href="'+ i[0] +'">' + i[1] + '</a></p>');
+										html_related += '<p>Mail message: <a href="'+ i[0] +'">' + i[1] + '</a></p>';
+									}
+								}
+								html_related += '</div>';
+								$("#results").append(html_related);
+							}
+							
+							var html_reco = '';
+							if (json['recommended_devs']){
+								html_reco += '<div id="recommended_devs"><div id="related_title">Recommended assignees</div>';
+								for each (var reco in json['recommended_devs']){
+									html_reco += '<p>'+ reco['name'] + ' - ' + reco['uuid'] + '</p>';								
+								}
+								$("#results").append(html_reco);														
+							}
+											
+							
+							for each (var c in json['issues']['issue_comments']){
+								if (c['commentor']) {
+									$("#results").append('<center><p class="author">---------------------------</p></center>');
+									if (c['commentor']['email'] != "None"){
+										$("#results").append('<p class="author">Comment by <b>'+ c['commentor']['email']+'</b>:</p>');
+									}else{
+										$("#results").append('<p class="author">Comment by <b>'+ c['commentor']['id']+'</b>:</p>');
+									}
+									aux = c['comment_text'];
+									aux = aux.replace(/(\r\n|\n|\r)/gm, "<br>");								
+									$("#results").append('<p class="comment">'+ aux +'</p>');
+								}
+							}
+
+						}
+});
+});
+
+$('#id_issue_id').autocomplete(
+{
+lookup: ['155357', '158740', '159978', '160221', '160635', '164255', '168914', '169980', '171499', '171918', '171993', '171994', '172313', '172741', '172823', '172916', '173022', '173073', '173204', '173290', '173518', '173620', '173633', '173930', '174117', '174516', '174897', '174932', '175017', '175105', '175108', '175187', '175353', '175535', '175587', '175600', '176030', '176223', '176532', '176705', '176831', '176932', '176983', '177123', '177326', '177767', '177772', '178391', '178436', '178475', '178642', '178774', '178805', '178814', '178991', '179003', '179052', '179058', '179093', '179127', '179144', '179224', '179235', '179296', '179303', '179393', '179497', '179578', '179641', '179987', '180036', '180210', '180312', '180328', '180446', '180493', '180734', '180820', '180871', '181025', '181119', '181137', '181167', '181320', '181382', '181444', '181508', '181718', '181750', '181782', '181847', '181925', '182099', '182139', '182311', '182333', '182354', '182389', '182400', '182538', '182685', '182735', '183060', '183137', '183267', '183273', '183505', '183546', '183633', '183654', '183657', '184099', '184100', '184361', '184381', '184500', '184516', '184545', '184586', '184671', '184710', '184751', '184832', '185161', '185228', '185345', '185460', '185461', '185649', '185674', '185740', '185913', '186037', '186050', '186074', '186145', '186336', '186368', '186400', '186453', '186553', '186571', '186607', '186783', '186786', '186927', '187086', '187145', '187149', '187210', '187262', '187549', '187600', '187746', '187960', '188060', '188233', '188645', '188687', '188775', '188804', '188886', '188922', '189005', '189040', '189090', '189144', '189151', '189456', '189487', '189766', '189792', '189863', '189936', '189944', '190010', '190011', '190032', '190104', '190118', '190152', '190470', '190777', '190862', '191005', '191127', '191259', '191545', '191616', '191617', '191656', '191695', '191811', '192052', '192090', '192094', '192102', '192146', '192259', '192305', '192314', '192581', '192744', '193047', '193517', '193612', '193719', '194093', '194166', '194286', '194583', '194798', '194807', '194887', '195131', '195172', '195296', '196195', '196361', '196577', '196708', '197338', '197482', '197487', '197627', '197677', '197856', '197974', '198461', '198463', '198598', '198856', '199139', '199152', '199366', '199397', '199413', '199541', '199791', '199966', '200030', '200210', '200327', '200523', '200608', '200931', '201185', '201235', '201537', '201628', '201755', '201920', '201954', '202031', '202163', '202695', '202738', '202851', '203534', '203777', '204201', '204271', '204345', '204444', '204561', '204902', '205453', '205454', '205508', '205547', '205658', '205686', '205784', '205983', '206041', '206235', '20627', '206751', '206821', '207272', '207530', '207773', '208005', '208075', '208534', '208853', '209103', '209145', '209267', '209323', '209511', '209582', '209679', '209733', '209999', '210389', '210485', '210575', '210676', '210683', '211082', '211522', '211661', '212078', '212158', '212683', '212936', '213222', '213580', '213888', '214796', '214830', '214866', '214921', '215028', '215229', '215334', '215775', '216186', '216277', '216295', '216386', '216618', '216675', '216758', '216766', '217030', '217189', '217219', '217307', '217316', '217351', '217477', '217682', '217772', '217819', '218155', '218177', '218469', '218546', '218684', '218712', '218826', '219099', '219122', '219333', '219996', '220054', '220190', '220196', '220305', '220507', '220840', '220982', '221257', '221381', '221479', '221614', '221637', '221648', '221812', '221840', '221850', '222111', '222130', '222131', '222326', '222933', '223433', '223602', '223867', '224517', '225010', '225061', '225063', '225209', '225395', '225413', '225567', '225649', '226022', '226062', '226065', '226410', '226627', '226629', '226758', '227099', '227348', '228180', '228887', '229074', '229643', '230146', '230227', '230301', '230396', '230601', '230631', '230633', '230782', '230958', '231276', '231413', '231822', '231924', '232649', '233007', '233064', '233103', '233145', '233347', '233415', '233682', '233821', '233854', '233865', '233866', '234175', '234402', '234498', '234631', '234749', '234925', '234940', '235235', '235257', '235274', '235419', '235447', '235706', '235818', '236314', '236390', '236507', '236759', '237797', '237838', '238298', '238459', '238906', '239998', '240014', '240175', '240282', '240285', '240438', '240485', '240658', '241003', '241171', '241727', '241913', '242105', '242733', '243108', '243202', '243618', '243713', '244124', '244263', '244488', '244674', '245032', '245317', '245463', '245537', '245538', '245688', '245730', '245767', '245822', '245862', '245909', '245938', '245995', '245997', '246019', '246022', '246023', '246036', '246039', '246043', '246068', '246182', '246274', '246276', '246278', '246280', '246300', '246335', '246364', '246402', '246436', '246501', '246538', '246612', '246638', '246722', '246845', '246968', '247018', '247043', '247052', '247484', '247554', '247622', '247668', '247845', '247967', '248023', '248061', '248067', '248115', '248158', '248182', '248202', '248211', '248369', '248441', '248453', '248606', '248663', '248664', '248716', '248717', '248762', '248905', '249048', '249125', '249234', '249557', '249753', '249838', '249939', '250229', '250234', '250276', '250343', '250385', '250546', '250559', '250818', '250902', '251142', '251189', '251356', '251359', '251519', '251641', '251663', '251721', '251784', '251872', '251935', '251989', '252076', '252172', '252346', '252347', '252355', '252490', '252627', '252808', '252825', '252897', '253039', '253160', '253347', '253353', '253557', '253654', '253655', '253659', '253662', '253667', '253668', '253669', '253670', '253671', '253672', '253686', '253729', '253810', '253874', '254160', '254199', '254225', '254463', '254464', '254465', '254486', '254508', '254760', '254767', '254817', '254856', '254892', '255199', '255276', '255375', '255436', '255662', '255692', '255802', '255809', '255911', '256407', '256512', '256592', '256593', '256594', '256710', '257030', '257114', '257210', '257326', '257397', '257470', '257493', '257581', '257798', '257871', '257948', '257993', '258029', '258056', '258199', '258241', '258256', '258319', '258332', '258400', '258441', '258518', '258638', '258728', '258808', '258834', '258835', '258844', '258852', '258853', '258855', '258893', '259012', '259224', '259325', '259377', '259459', '259472', '259515', '259538', '259546', '259677', '259691', '259848', '259874', '259896', '259905', '259922', '260297', '260620', '260731', '260756', '260874', '261005', '261142', '261191', '261200', '261221', '261237', '261332', '261335', '261336', '261341', '261359', '261392', '261456', '261475', '261542', '261552', '261590', '261621', '261622', '261666', '261705', '261742', '261783', '261833', '261834', '261835', '261890', '261948', '261996', '262022', '262041', '262103', '262119', '262121', '262122', '262133', '262349', '262413', '262462', '262478', '262483', '262486', '262493', '262587', '262606', '262723', '262728', '262757', '262759', '262808', '262825', '262917', '262940', '263011', '263028', '263115', '263140', '263142', '263466', '263480', '263635', '263658', '263659', '263698', '263703', '263750', '263754', '264333', '264473', '264475', '264485', '264487', '264534', '264537', '264565', '264621', '264678', '264716', '264730', '264857', '264898', '264900', '264905', '264933', '264970', '264973', '264983', '265038', '265095', '265215', '265251', '265291', '265302', '265303', '265319', '265405', '265453', '265523', '265610', '265673', '265689', '265698', '265754', '265870', '265877', '266005', '266012', '266014', '266028', '266080', '266095', '266104', '266194', '266265', '266285', '266359', '266383', '266437', '266602', '266829', '267006', '267283', '267297', '267302', '267323', '267398', '267399', '267499', '267556', '267622', '267663', '267685', '267701', '267757', '267924', '267967', '268065', '268109', '268149', '268223', '268277', '268396', '268453', '268670', '268796', '268855', '268862', '269072', '269257', '269301', '269310', '269420', '269447', '269451', '269648', '269675', '269737', '269814', '269855', '269922', '270001', '270037', '270053', '270064', '270076', '270143', '270210', '270233', '270316', '270400', '270430', '270481', '270538', '270641', '270689', '270703', '270808', '270965', '270972', '271024', '271067', '271068', '271069', '271070', '271084', '271102', '271289', '271305', '271353', '271354', '271365', '271373', '271394', '271427', '271467', '271478', '271526', '271545', '271566', '271608', '271646', '271659', '271749', '271765', '271766', '271767', '271768', '271769', '271770', '271863', '271950', '272034', '272095', '272174', '272181', '272230', '272250', '272294', '272312', '272438', '272499', '272511', '272807', '272813', '272917', '272924', '272942', '273057', '273095', '273112', '273144', '273153', '273420', '273437', '273506', '273509', '273533', '273604', '273792', '273798', '273873', '274041', '274048', '274116', '274137', '274240', '274335', '274696', '274772', '274797', '274842', '274846', '274925', '275055', '275147', '275159', '275160', '275161', '275163', '275367', '275434', '275435', '275479', '275501', '275502', '275508', '275586', '275695', '275783', '275845', '276145', '276191', '276271', '276349', '276482', '276540', '276911', '276915', '277392', '277451', '277461', '277517', '277645', '277665', '277692', '277774', '277854', '277858', '277878', '277929', '277936', '277992', '278069', '278141', '278233', '278611', '279808', '279911', '279974', '280229', '280457', '280491', '280494', '280813', '280854', '280908', '280936', '280976', '281240', '281273', '281388', '281420', '281490', '281554', '281604', '281812', '281894', '281915', '281962', '282153', '282280', '282370', '282396', '282584', '282766', '283029', '283365', '283388', '283471', '283501', '283506', '283549', '283647', '283663', '283720', '283776', '284052', '284328', '284339', '284552', '284597', '284662', '284668', '284717', '284719', '285107', '285272', '285275', '285460', '285598', '285600', '285637', '285744', '285927', '285958', '286179', '286226', '286237', '286466', '286521', '286572', '286603', '286688', '286797', '286857', '286890', '287166', '287170', '287195', '287338', '287501', '287513', '287560', '287580', '287720', '287932', '287940', '288077', '288084', '288179', '288180', '288222', '288231', '288237', '288410', '288577', '288607', '288852', '288853', '288854', '288860', '288865', '288915', '288962', '289024', '289163', '289373', '289495', '289627', '289643', '289716', '289760', '290320', '290360', '290734', '290735', '290755', '290908', '291085', '291099', '291188', '291249', '291250', '291494', '291677', '291708', '291786', '291874', '291926', '292165', '292547', '292660', '292711', '292873', '292970', '293192', '293334', '293495', '293575', '293795', '293914', '293921', '293974', '294041', '294310', '294333', '294344', '294361', '294374', '294413', '294457', '294497', '294631', '294712', '294768', '294885', '295034', '295129', '295164', '295349', '295404', '295566', '295697', '295814', '295903', '295914', '295982', '296083', '296161', '296178', '296208', '296253', '296360', '296403', '296465', '296511', '296537', '296621', '296794', '297206', '297309', '297401', '297673', '297785', '297797', '96107'],
+minLength: 3
+});
+
+
+});
+</script>
+
+</head>
+
+<body>
+
+<h2>ALERT Search service</h2>
+<!--<div id="stylized" class="myform">-->
+	<div id="stylized" class="myform">		
+
+		<label><label for="id_project">Project</label>
+		<span class="small">Project name</span>
+		</label>
+
+		<select name="project" id="id_project">
+		<option value="solid">Solid (KDE)</option>
+		</select>
+
+		<table border="0"><tr><td>
+
+  
+			<label><label for="id_issue_id">Issue id</label>
+			<span class="small">Search for issue ID and display an extended issue view</span>
+			</label>
+
+			<input type="text" name="issue_id" id="id_issue_id" />
+			</td></tr>
+			<tr><td>        
+			<label><label for="id_keywords">Find recommended developers</label>
+			<span class="small">Ask the recommendation service for the best
+			assignee for the selected issue</span>
+			</label>        
+			<ul>
+			<li><label for="id_suggested"><input type="radio"
+													id="id_suggested" value="sug"
+													name="suggested" />
+			Please show me!</label></li>
+			</ul>
+			</td></tr>
+			<tr><td><label><label class="grey" for="id_keywords">Keywords</label>
+			<span class="small">Search the knowledge base with a keyword or topic</span></label>
+			<input type="text" name="keywords" id="id_keywords" disabled="disabled"/>
+			</td></tr>
+			<tr><td>        
+			<label><label class="grey" for="id_happening">Show me what is happening in the project</label>
+			<span class="small">Search the knowledge base with a keyword or topic</span>
+			</label>        
+			<ul>
+			<li><label class="grey" 
+					for="id_happening"><input 
+					type="radio"
+					id="id_happening" value="happening"
+					name="happening" disabled />
+			Please show me!</label></li>
+			</ul>
+			</td></tr>
+			<tr><td>        
+			<label><label class="grey" for="id_happening">Find related issues</label>
+			<span class="small">Find related issues to the selected one</span>
+			</label>        
+			<ul>
+			<li><label class="grey" 
+					for="id_happening"><input 
+					type="radio"
+					id="id_happening" value="happening"
+					name="happening" disabled />
+			Please show me!</label></li>
+			</ul>
+			</td></tr>		
+		</table>
+  
+		<button type="submit">Search</button>
+		</div>
+
+	<div id="results"></div>
+
+</body>
